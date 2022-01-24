@@ -5,7 +5,7 @@ export const AppContext = createContext();
 
 
 export const Provider = (props) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState('');
   const[orderdata,setorderdata]=useState({})
   const[uri,seturi]=useState({})
   const[User,setUser]=useState([])

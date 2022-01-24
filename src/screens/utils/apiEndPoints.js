@@ -1,15 +1,21 @@
 export default  {
-     login : 'user/login',
-     register: 'user/signup',
-     sendCode:'auth/email',
+     login : 'cutomer/signin',
+     register: 'cutomer/register',
+     sendCode:'cutomer/checkEmailExists',
      addCard:'card/add',
-     updatepassword:'user/update',
+     updatepassword:'cutomer/updateCustomer/',
      updateCard:'card/update',
-     orderadd:'order/add',
-     GetAllOrdersByUser:'order/GetAllOrdersByUser',
+     orderadd:'order/addNew',
+     GetAllOrdersByUser:'order/getAllByCust/',
      orderBookRider:'order/BookRider',
      UpdateOrderStatus:'order/UpdateOrderStatus',
-      ReviewRatingByUser:'order/ReviewRatingByUser'
+      ReviewRatingByUser:'order/ReviewRatingByUser',
+      truckgetAllTruck:'truck/getAllTruck',
+      orderupdateOrder:'order/updateOrder/',
+      orderinfo:'order/getOrderInfo/',
+      cutomercheckOtpCode:'cutomer/checkOtpCode/',
+      pasword:'cutomer/updatePass/',
+      amount:'driver/withDrawAmt/'
 
     
     

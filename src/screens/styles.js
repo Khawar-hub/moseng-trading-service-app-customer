@@ -186,7 +186,7 @@ BottomSheet:{
   },
   locationInput:{
     width:'90%',
-    height:30,
+    height:'auto',
     backgroundColor:'#fff',
     color:"#9D9D9D",
     marginLeft:8,
@@ -206,7 +206,7 @@ BottomSheet:{
   username:{marginLeft:7,fontSize:12,fontFamily:'Quicksand-Bold',marginTop:8,color:'#9D9D9D'},
   listItem:{
     width:'100%',
-    height:120,
+    height:'auto',
     borderRadius:7,
     backgroundColor:"#fff",
     marginVertical:7,
@@ -254,11 +254,12 @@ postcontainerChild:{
   
 },
 postTopView:{
-    flex:9,
+    height:'auto',
     borderRadius:5,
     backgroundColor:'#fff',
     paddingTop:20,
-    paddingHorizontal:20
+    paddingHorizontal:20,
+    paddingVertical:30
 },
 postBottomView:{
    height:50,
@@ -287,10 +288,28 @@ rowInput:{
 mapView:{
   marginTop:10,
   width:'100%',
-  height:140,
+
   
   
 },
+modalView:{ 
+  borderRadius:10,
+  height:'auto',
+  width:'100%',
+  backgroundColor:'#fff',
+  alignSelf:'center',
+  paddingHorizontal:14,
+  paddingVertical:20
+},
+modalRow:{
+  height:43,
+  flexDirection:'row',
+  alignItems:'center',
+
+
+
+},divider:{width:'100%',height:1,backgroundColor:'silver'},
+modalText:{fontFamily:'DMSans-Regular',fontSize:16,color:'#000',marginLeft:20},
 headerRightText:{
   marginRight:20,
   fontFamily:'Quicksand-Bold',

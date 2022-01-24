@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, TextInput,Image, ActivityIndicator } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput,Image,PermissionsAndroid, ActivityIndicator } from 'react-native'
 import { SvgXml } from 'react-native-svg';
 import { styles } from './styles';
 import svg from './svg';
@@ -7,9 +7,75 @@ import {useAuth} from '../contexts/Auth'
 import APIManager from '../../managers/APIManger';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppContext } from './context/context';
+import Geolocation from 'react-native-get-location';
+import Geocoder from 'react-native-geocoding';
 const LoginScreen = ({ navigation }) => 
 {
-  
+    const [location,setlocation]=React.useState('')
+    React.useEffect(()=>{
+          async function func(){
+          const loc=await  getcurrentLocation()
+          Geocoder.init('AIzaSyAW5O831v7xI0OVGJufVHJiIcJgeMybNdA')
+          Geocoder.from(loc.latitude, loc.longitude).then(json =>
+             {
+        
+                                  console.log(json);
+                                   var addressComponent = json.results[2].formatted_address;
+                                 setlocation(addressComponent)
+          
+             }).catch(error => console.warn(error));  
+             console.log(location)
+          }
+          func()
+    },[])
+
+    const geocode=async(loc)=>{
+       
+    }
+    const getcurrentLocation = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            )
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                return Geolocation.getCurrentPosition({
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                })
+                    .then(location => {
+                        return location
+                    })
+                    .catch(ex => {
+                        const { code, message } = ex;
+                        console.warn(code, message);
+                        if (code === 'CANCELLED') {
+                            alert('Location cancelled by user or by another request');
+                        }
+                        if (code === 'UNAVAILABLE') {
+                            alert('Location service is disabled or unavailable enable it in setting and try reloading the app');
+                        }
+                        if (code === 'TIMEOUT') {
+                            alert('Location request timed out');
+                        }
+                        if (code === 'UNAUTHORIZED') {
+                            alert('Location permission denied ');
+                        }
+          
+                    });
+                    
+            
+            }
+            else {
+                alert("Location permission denied")
+            }
+        }
+        catch (err) {
+            console.warn(err)
+        }
+         
+           
+          
+      }
     const auth=useAuth()
     const ref1 = React.useRef()
     const ref2 = React.useRef()
@@ -73,21 +139,27 @@ const LoginScreen = ({ navigation }) =>
     const onSubmit=async()=>{
          setloading(true)
        
-        const formdata=new FormData()
-        formdata.append('Email',data.email)
-        formdata.append('Password',data.password)
+      
         try{
-        const res=await new APIManager().userLogin(formdata)
-        if(res.success===true)
-        {
-           await AsyncStorage.setItem('User',JSON.stringify(res.User))
-             auth.signIn()
+        const res=await new APIManager().userLogin(JSON.stringify({
+            email:data.email,
+            password:data.password,
+        }))
             setloading(false)
+        if(res.message==="*** Customer Signed In SuccessFully ****")
+        {
+            const resp=await new APIManager().updateuser(JSON.stringify({
+                curntLoc:location
+            }),res.myResult._id) 
+           await AsyncStorage.setItem('User',JSON.stringify(res))
+             auth.signIn()
+       
         }
         else{
-            alert('Invalid Credentials')
+            alert(res.message)
             setloading(false)
-        }}
+        }
+    }
         catch(e){
             console.log(e)
 

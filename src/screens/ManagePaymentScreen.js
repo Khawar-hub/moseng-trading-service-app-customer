@@ -220,7 +220,7 @@ const ManagePaymentScreen=({navigation,route})=> {
             />
 
                 <TouchableOpacity onPress={validateData} style={styles.button}>
-                {loader?<ActivityIndicator size={20} color={'#fff'}/>:<Text style={styles.btnText}>Add new Card</Text>}
+                {loader?<ActivityIndicator size={20} color={'#fff'}/>:<Text style={styles.btnText}>Update Card</Text>}
                 </TouchableOpacity>
 
             </View>

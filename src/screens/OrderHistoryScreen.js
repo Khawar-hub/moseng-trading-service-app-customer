@@ -15,7 +15,7 @@ const OrderHistoryScreen=({navigation})=> {
     
     
     const focus=useIsFocused()
-    const[user,setuser]=React.useState([])
+    const[user,setuser]=React.useState('')
     const[orders,setorder]=React.useState([])
     const[loader,setloader]=React.useState(false)
    React.useEffect(()=>{
@@ -23,32 +23,33 @@ const OrderHistoryScreen=({navigation})=> {
        async function func(){
            setloader(true)
           
-        setuser(JSON.parse(await AsyncStorage.getItem('User')))
-           const formdata=new FormData()
-               formdata.append("UserId",JSON.parse(await AsyncStorage.getItem('User')).map((ietm)=>{return ietm._id}).toString())
-               const res=await new APIManager().getallorder(formdata)
-               if(res.success===true)
+        setuser(JSON.parse(await AsyncStorage.getItem('User')).myResult._id)
+          console.log(user)
+               const res=await new APIManager().getallorder(JSON.parse(await AsyncStorage.getItem('User')).myResult._id)
+               if(res.message==="*** All Orders by A Customer  ****")
                {
-                   setorder(res.Data)
+                   setorder(res.allOrders)
                    console.log(res)
 
                    setloader(false)
                }
                else{
-                   
+                   alert("No Orders Found")
                    setloader(false)
                }
 
        }
        func()
    },[focus])
-    const navigate = async(item,length,arr) => {
+    const navigate = async(id,length,pick,drop) => {
         if(length===0){
             alert('No Requests exists for this Order')
         }
         else{
-            setorderdata({price:item.Price,id:item._id,pickuplat:item.PickUpLat,pickuplng:item.PickUpLong,dropofflat:item.DropOfLat,dropofflng:item.DropOfLong})
-       setCart(item.PickUpRequests)
+          
+       setCart(id)
+       console.log(pick.coordinates[0],pick.coordinates[1],drop.coordinates[0],drop.coordinates[1])
+       setorderdata({pickuplat:pick.coordinates[0],pickuplng:pick.coordinates[1],dropofflat:drop.coordinates[0],dropofflng:drop.coordinates[1]})
        navigation.navigate('Notifications',{screen:'NotificationScreen'})
      
       

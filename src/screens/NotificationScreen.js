@@ -8,28 +8,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppContext } from './context/context';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 const NotificationScreen=({navigation})=> {
+   
     const focus=useIsFocused()
     const {item1,item2,item3} = useContext(AppContext)
     const[cart,setCart]=item1;
     const[orderdata,setorderdata]=item2;
     const[uri,seturi]=item3;
+    const[approve,setapprove]=React.useState([])
    React.useEffect(()=>{
    
        async function func(){
-         
-           console.log(cart)
+         console.log(cart)
+          const res=await new APIManager().orderinfo(cart)
+          if(res.message==="*** Array of Drivers who have confirmed the order ****")
+          {
+              setapprove(res.distance)
+          }
+        
+
                
        }
        func()
    },[focus])
    
     const navigate = async(item) => {
-        console.log(orderdata)
-        const formdata=new FormData()
-        formdata.append('OrderId',orderdata.id)
-        formdata.append('Status','Active')
-          const res=await new APIManager().updatestatus(formdata)
-          if(res.success===true)
+      
+        
+          const res=await new APIManager().updateOrder(JSON.stringify({
+            finalDriver:item
+          }),cart)
+          if(res.message==="*** Customer Updated SuccessFully ***")
           {
             navigation.navigate('ActiveOrderScreen')
            
@@ -62,7 +70,7 @@ const NotificationScreen=({navigation})=> {
         <View style={styles.notificationContainer}>
           
            <FlatList
-                data={cart}
+                data={approve}
                 renderItem={({ item }) =>
                     <NotificationItem
                         item={item}

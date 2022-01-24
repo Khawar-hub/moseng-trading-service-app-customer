@@ -43,16 +43,17 @@ const ForgotPasswordScreen = ({ navigation }) => {
           const number=Math.floor(1000 + Math.random() * 9000)
           console.log(data)
           const formdata=new FormData()
-          formdata.append('Code',number)
-          formdata.append('Email',data.Email)
-           await Async.setItem('Code',JSON.stringify(number))
-           await Async.setItem('Email',data.Email)
-          const res=await new APIManager().sendCode(formdata)
+         
+        
+          
+          const res=await new APIManager().sendCode(JSON.stringify({
+              email:data.Email
+          }))
 
-          if(res.success===true)
+          if(res.message!=="** Verification code sent to your Email which will expire in next 60 seconds *")
           {
-              alert('Code has been send to your email')
-              navigation.navigate('VerificationScreen')
+              alert('** Verification code sent to your Email *')
+              navigation.navigate('VerificationScreen',{email:data.Email})
               setloader(false)
           }
           else{

@@ -1,13 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 
 
 import { SvgXml } from 'react-native-svg';
+import APIManager from '../../managers/APIManger';
 import { styles } from './styles';
 import svg from './svg';
 const VerificationScreen = ({ navigation,route }) => {
     const[code,setcode]=React.useState(null)
+    const{email}=route.params
     React.useEffect(()=>{
     async function func(){
                    setcode(JSON.parse(await AsyncStorage.getItem('Code')))
@@ -90,16 +92,20 @@ const VerificationScreen = ({ navigation,route }) => {
              onSubmit()
               }
         }
-        const onSubmit=()=>{
-            const digit=number.num1+number.num2+number.num3+number.num4
-    
-            console.log(digit)
-            if(code==digit)
+        const [load,setload]=React.useState(false)
+        const onSubmit=async()=>{
+            setload(true)
+            const res=await  new APIManager().verify(JSON.stringify({
+                optpCode:number.num1+number.num2+number.num3+number.num4
+            }),email)
+            if(res.message==="*** Customer OtpCode Matched SuccessFully ***")
             {
-                navigation.navigate('Update')
+                navigation.navigate('Update',{email:email})
+                setload(false)
             }
             else{
-                alert('Incorrect Code')
+               
+                setload(false)
             }
         }
     return (
@@ -179,8 +185,8 @@ const VerificationScreen = ({ navigation,route }) => {
                 </View>
 
                 <View>
-                    <TouchableOpacity onPress={validateData} style={[styles.button, { marginBottom: 10 }]}>
-                        <Text style={[styles.btnText]}>Verify</Text>
+                    <TouchableOpacity disabled={load} onPress={validateData} style={[styles.button, { marginBottom: 10 }]}>
+                       {load?<ActivityIndicator size={20} color={'#fff'}/>:<Text style={[styles.btnText]}>Verify</Text>}
                     </TouchableOpacity>
                 
                 </View>

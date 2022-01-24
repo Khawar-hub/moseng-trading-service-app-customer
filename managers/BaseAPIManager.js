@@ -38,7 +38,32 @@ export default class BaseApiManager  {
     async post(url, parameters) {
         let requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'multipart/form-data',"Accept": "application/json", },
+            headers: {'Content-Type': 'application/json' },
+            body: parameters   ,
+                   
+        };
+        console.log('Data to be Posted in Server: ', parameters)
+        try {
+            return await fetch(url, requestOptions)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log("API Response", responseJson)
+                    return responseJson
+                });
+        }
+        catch (error) {
+            console.log("BaseAPI Manager Post Method Exception: ", error)
+            if (error.message.includes('Network')) {
+                alert("Please check your Network Connection!")
+                return
+            }
+            return error
+        }
+    }
+    async put(url, parameters) {
+        let requestOptions = {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json' },
             body: parameters   ,
                    
         };

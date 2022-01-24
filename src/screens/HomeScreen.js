@@ -66,10 +66,13 @@ const HomeScreen=({navigation})=> {
        
       
   }
-  const[user,setuser]=React.useState([])
+  const[user,setuser]=React.useState('')
   const [address,setAddress]=React.useState('')
-  React.useEffect(async () => {
-      setuser(JSON.parse(await AsyncStorageLib.getItem('User')))
+  React.useEffect(() => {
+        async function func(){
+      console.log(JSON.parse(await AsyncStorageLib.getItem('User')).myResult.fullname)
+      setuser(JSON.parse(await AsyncStorageLib.getItem('User')).myResult.fullname)
+      console.log(user)
       
       const current_loc = await getcurrentLocation()
       Geocoder.init('AIzaSyAW5O831v7xI0OVGJufVHJiIcJgeMybNdA')
@@ -79,6 +82,7 @@ const HomeScreen=({navigation})=> {
                               console.log(json);
                                var addressComponent = json.results[2].formatted_address;
                              setAddress(addressComponent)
+                            
       
          }).catch(error => console.warn(error));         
       console.log(current_loc)
@@ -88,6 +92,9 @@ const HomeScreen=({navigation})=> {
           Fromlng: current_loc.longitude,
       })
       setIsLoading(false)
+      await AsyncStorageLib.setItem('address',address)
+    }
+    func()
   }, []);
 
   
@@ -96,7 +103,7 @@ const HomeScreen=({navigation})=> {
     return (
         <View style={styles.container}>
             <View style={{paddingHorizontal:20,height:50,width:'100%',alignItems:'flex-start',justifyContent:"center"}}>
-                <Text style={{fontFamily:"Quicksand-Bold",fontSize:20,color:"#000"}}>Welcome ,{user.map(item=>{return item.FullName}).toString()}</Text>
+                <Text style={{fontFamily:"Quicksand-Bold",fontSize:20,color:"#000"}}>Welcome ,{user}</Text>
             </View>
            <View style={styles.locationFeildView}>
                <SvgXml style={{marginTop:3}} xml={svg.location}/>

@@ -10,27 +10,31 @@ import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import { AppContext } from './context/context';
 const ActiveOrderScreen = ({navigation,route}) => {
     const {item1,item2} = useContext(AppContext)
-    
+    const [cart,setcart]=item1;
     const[orderdata,setorderdata]=item2;
     
     React.useEffect(()=>{
-                 console.log(orderdata.id)
+                 console.log(orderdata)
     },[])  
     const rf=React.useRef()
     const rf1=React.useRef()
     const rf2=React.useRef()
     const [loader,setloader]=React.useState(false)
     const navigate = async() => {
+        
         setloader(true)
-        const formdata=new FormData()
-        formdata.append('OrderId',orderdata.id)
-        formdata.append('Status','Completed')
-          const res=await new APIManager().updatestatus(formdata)
-          if(res.success===true)
+       
+          const res=await new APIManager().updateOrder(JSON.stringify({
+               avgSpeed:Math.floor(10 + Math.random() * 90)
+          }),cart)
+          setloader(false)
+          if(res.message=== "*** Customer Updated SuccessFully ***")
           {
-            navigation.navigate('CompletedOrderScreen')
+              alert("Order Completed")
+            navigation.navigate('HomeScreen')
+
               setloader(false)
-        }
+          }
           else{
               alert('Cant Finalize Order Now Try Again Later')
               setloader(false)
@@ -43,7 +47,7 @@ const ActiveOrderScreen = ({navigation,route}) => {
         <>
         <View style={{flexDirection:'row',height:55,width:'100%',backgroundColor:"#fff",alignItems:'center',justifyContent:"flex-start"}}>
         <SvgXml style={{marginLeft:15,marginRight:-8}} xml={svg.square}/>
-          <Text style={{fontFamily:'Quicksand-Bold',fontSize:20,marginLeft:20,color:'#000'}}>Order # {orderdata.id.substring(0,6)} is active Now</Text>
+          <Text style={{fontFamily:'Quicksand-Bold',fontSize:20,marginLeft:20,color:'#000'}}>Order # 6bdhj3 is active Now</Text>
         </View>
         <View style={[styles.postcontainer]}>
 

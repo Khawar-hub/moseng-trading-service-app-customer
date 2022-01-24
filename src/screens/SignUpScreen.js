@@ -122,17 +122,40 @@ const SignUpScreen = ({navigation}) => {
         }
        
         else {
-           navigation.navigate('UploadDocScreen',{data:data})
+           onSubmit()
         }
         
         
+    }
+    const [loader,setloader]=React.useState(false)
+    const onSubmit=async()=>{
+          setloader(true)
+       
+          const res=await new APIManager().userSignUp(JSON.stringify({
+            fullname:data.name,
+            phoneNo:data.phone,
+            password:data.password,
+            email:data.email,
+            
+          
+          }))
+              if(res.message==="*** Customer SuccessFully Added ***")
+              {
+                  navigation.navigate('LoginScreen')
+                  setloader(false)
+              }
+              else{
+                  alert(res.message)
+                  setloader(false)
+              }
+
     }
    
    
     const [code, setCode] = React.useState("1");
     const [number, setNumber] = React.useState("");
     return (
-       <ScrollView showVerticalScrollIndicator={false}>
+    
         <View style={styles.container}>
            
             <View style={styles.innerContainerSignUp}>
@@ -174,7 +197,7 @@ const SignUpScreen = ({navigation}) => {
                             ref={ref2}
                         />
                    {!validation.isValidEmail ? <Text style={styles.errorText}>Invalid Email!!!</Text> : null}
-
+                    <View>
                         <TextInput style={styles.Input}
                         placeholderTextColor={'silver'}
                             placeholder="Password"
@@ -189,7 +212,7 @@ const SignUpScreen = ({navigation}) => {
                             ref={ref3}
                         />
                          {secureTextEntry.pwd ?
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 210 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 30 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             pwd: false
@@ -198,7 +221,7 @@ const SignUpScreen = ({navigation}) => {
                                         <Image source={require('../../assets/images/eye.png')} />
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 210 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 30 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             pwd: true
@@ -208,7 +231,8 @@ const SignUpScreen = ({navigation}) => {
                                     </TouchableOpacity>
                                 }
                                 {!validation.isValidPassword ? <Text style={styles.errorText}>Password must be greater than 8 characters</Text> : null}
-
+                                </View>
+                                <View>
                         <TextInput style={styles.Input}
                         placeholderTextColor={'silver'}
                             placeholder="Confirm Password"
@@ -223,7 +247,7 @@ const SignUpScreen = ({navigation}) => {
                             ref={ref4}
                         />
                          {secureTextEntry.confrm_pwd ?
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 290 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 30 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             confrm_pwd: false
@@ -232,7 +256,7 @@ const SignUpScreen = ({navigation}) => {
                                         <Image source={require('../../assets/images/eye.png')} />
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 290 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 30 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             confrm_pwd: true
@@ -242,7 +266,7 @@ const SignUpScreen = ({navigation}) => {
                                     </TouchableOpacity>
                                 }
                                 {!validation.isValidConfirmPassword ? <Text style={styles.errorText}>Passwords do not Match</Text> : null}
-                                
+                                </View>
 
                                 <PhoneInput
                                     ref={ref5}
@@ -252,7 +276,8 @@ const SignUpScreen = ({navigation}) => {
                                     textContainerStyle={{
                                         
                                     backgroundColor: '#fff',
-                                    paddingBottom:8,
+                                    paddingBottom:-10,
+                                    paddingTop:2
                                     
 
                                     
@@ -262,12 +287,12 @@ const SignUpScreen = ({navigation}) => {
                                     textInputStyle={{ height:40,
                                     fontFamily:'Quicksand-Bold',
                                     fontSize:16,
-                                    paddingBottom:7
+                                   
                                     
                                     }}
                                     containerStyle={{
                                         paddingTop:5,
-                                    marginTop: 35,
+                                    marginTop: 30,
                                     width: "100%",
                                     height: '10%',
                                     borderBottomWidth:1,
@@ -325,8 +350,8 @@ const SignUpScreen = ({navigation}) => {
                 </View>
 
                 <View>
-                    <TouchableOpacity onPress={validateData} style={[styles.button, { marginBottom: 10,marginTop:20 }]}>
-                      <Text style={[styles.btnText]}>Sign Up</Text>
+                    <TouchableOpacity disabled={loader} onPress={validateData} style={[styles.button, { marginBottom: 10,marginTop:20 }]}>
+                     {loader?<ActivityIndicator color={'#fff'} size={20}/>:<Text style={[styles.btnText]}>Sign Up</Text>}
                     </TouchableOpacity>
                     <View style={styles.textSignUp}>
                        <Text style={styles.newUser}>Have an account?</Text><TouchableOpacity onPress={()=>navigation.navigate('LoginScreen')}><Text  style={[styles.baseColor,{marginLeft:6}]}>Login</Text></TouchableOpacity>
@@ -339,7 +364,7 @@ const SignUpScreen = ({navigation}) => {
 
 
         </View>
-        </ScrollView>
+    
         
       
      

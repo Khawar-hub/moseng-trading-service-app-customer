@@ -10,11 +10,14 @@ import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import { AppContext } from './context/context';
 const ProfileScreen=({navigation})=> {
    
-    const[user,setuser]=React.useState([])
+    const[user,setuser]=React.useState('')
+    const[address,setaddress]=React.useState('')
    React.useEffect(()=>{
        async function func(){
-    setuser(JSON.parse(await AsyncStorageLib.getItem('User')))
-    console.log(user)
+    setuser(JSON.parse(await AsyncStorageLib.getItem('User')).myResult.fullname)
+    setaddress(JSON.parse(await AsyncStorageLib.getItem('User')).myResult.paymentTotal)
+    console.log(JSON.parse(await AsyncStorageLib.getItem('User')))
+    console.log(await AsyncStorageLib.getItem('address'))
        }
        func()
    },[])
@@ -26,14 +29,14 @@ const ProfileScreen=({navigation})=> {
         <View style={styles.container}>
             <View style={styles.imageView}>
                 <SvgXml xml={svg.pic}/>
-                <Text style={styles.profileName}>{user.map((item)=>item.FullName).toString()}</Text>
-                <Text style={styles.profileAddress}>New York City</Text>
+                <Text style={styles.profileName}>{user}</Text>
+                <Text style={[styles.profileAddress,{width:'70%'}]}>17th St NW & E Street NW, Washington, DC 20634, United States</Text>
 
             </View>
             <View style={styles.amountView}>
                 <SvgXml xml={svg.trophy}/>
                 <Text style={styles.myspentText}>Account Balance</Text>
-                <Text style={styles.amount}>{user.map((item)=>item.AccountBalance).toString()} $</Text>
+                <Text style={styles.amount}>{address} $</Text>
 
             </View>
             <View style={styles.feildView}>
@@ -41,7 +44,7 @@ const ProfileScreen=({navigation})=> {
                     <SvgXml style={{marginTop:6}} xml={svg.payment}/>
 
                 </View>
-                <TouchableOpacity onPress={()=>navigation.navigate('ManagePayment')} style={styles.labelRow}>
+                <TouchableOpacity  style={styles.labelRow}>
                     <Text style={styles.labelText}>Manage Payment Options</Text>
                     <SvgXml xml={svg.arrowright}/>
 

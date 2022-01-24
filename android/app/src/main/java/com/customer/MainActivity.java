@@ -1,4 +1,4 @@
-package com.customer;
+package com.Mosestradingapp;
 
 import com.facebook.react.ReactActivity;
 

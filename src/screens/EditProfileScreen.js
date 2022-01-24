@@ -9,33 +9,39 @@ import svg from './svg';
 import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import APIManager from '../../managers/APIManger';
+import AsyncStorageLib from '@react-native-async-storage/async-storage';
 const EditProfileScreen = ({navigation}) => {
     const focus=useIsFocused()
-    const[user,setuser]=React.useState([])
+    const[user,setuser]=React.useState('')
+    const[user2,setuser2]=React.useState('')
+    const[user3,setuser3]=React.useState('')
     React.useEffect(()=>{
         async function func(){
-          setuser(JSON.parse(await AsyncStorage.getItem('User')))
-          
+        
+          setData({...data,name:JSON.parse(await AsyncStorage.getItem('User')).myResult.fullname,email:JSON.parse(await AsyncStorage.getItem('User')).myResult.email,phone:JSON.parse(await AsyncStorage.getItem('User')).myResult.phoneNo})
         }
         func()
     },[focus])
     const [loader,setloader]=React.useState(false)
     const onSubmit=async()=>{
         setloader(true)
-        const formdata=new FormData()
-        formdata.append('FullName',data.name)
-        formdata.append('Email',data.email)
-        formdata.append('PhoneNumber',data.phone)
-        formdata.append('Password',data.password)
-        formdata.append('image',productImage)
-        const res=await new APIManager().updateuser(formdata)
-        if(res.success===true)
+       
+        const res=await new APIManager().updateuser(JSON.stringify({
+            
+
+             fullname:data.name,
+            phoneNo:data.phone,
+           
+        }),JSON.parse(await AsyncStorageLib.getItem('User')).myResult._id)
+        if(res.message==="*** Customer Updated SuccessFully ***")
         {
-            alert('Profile Updated')
+            alert('Profile Updated Changes will appear after next login')
             navigation.goBack()
+            setloader(false)
         }
         else{
-            alert(res.message)
+           alert('Error While updating Customer')
+            setloader(false)
         }
 
 
@@ -51,9 +57,8 @@ const EditProfileScreen = ({navigation}) => {
      const [data, setData] = React.useState({
         name: '',
         email: '',
-        phone: '',
-        password: '',
-        confirmpassword:'',
+        phone:'',
+       
         
     });
     const [validation, setValidation] = React.useState({
@@ -80,28 +85,9 @@ const EditProfileScreen = ({navigation}) => {
     const validateData = () => {
         console.log(data)
         console.log(validation.isValidPassword)
-        
-         if (data.password === '') {
-           
-            setValidation({
-                ...validation,
-                isValidPassword: false
-            })
-            
-            return;
-            
-        }
-        else if (data.confirmpassword === '' || data.confirmpassword !== data.password) {
-            setValidation({
-                ...validation,
-                isValidConfirmPassword: false
-            })
-            return;
-        }
        
-        else {
             onSubmit()
-        }
+        
         
         
     }
@@ -157,7 +143,7 @@ const EditProfileScreen = ({navigation}) => {
         <ScrollView>
         <View style={[styles.postcontainer]}>
             <View style={styles.postcontainerChild}>
-                <View style={[styles.postTopView,{paddingTop:0,marginBottom:40}]}>
+                <View style={[styles.postTopView]}>
                 <TextInput style={[styles.Input,{fontSize:14}]}
                             placeholder="Full name"
                             placeholderTextColor={'silver'}
@@ -169,7 +155,7 @@ const EditProfileScreen = ({navigation}) => {
                             onSubmitEditing={() => ref2.current.focus()}
                             blurOnSubmit={false}
                             returnKeyLabel={"Next"}
-                            defaultValue={user.map((item)=>{return item.FullName}).toString()}
+                            defaultValue={data.name}
                             
                         
                         />
@@ -187,12 +173,13 @@ const EditProfileScreen = ({navigation}) => {
                             autoCapitalize="none"
                             returnKeyLabel={"Next"}
                             ref={ref2}
-                            defaultValue={user.map((item)=>{return item.Email}).toString()}
+                            defaultValue={data.email}
+                            editable={false}
                            
                         />
                    {!validation.isValidEmail ? <Text style={styles.errorText}>Invalid Email!!!</Text> : null}
 
-                        <TextInput style={[styles.Input,{fontSize:14}]}
+                        {/* <TextInput style={[styles.Input,{fontSize:14}]}
                             placeholder="Password" placeholderTextColor={'silver'}
                             secureTextEntry={secureTextEntry.pwd}
                             returnKeyType={'next'}
@@ -257,16 +244,19 @@ const EditProfileScreen = ({navigation}) => {
                                         <Image source={require('../../assets/images/eyeclosed.png')} />
                                     </TouchableOpacity>
                                 }
-                                {!validation.isValidConfirmPassword ? <Text style={styles.errorText}>Passwords do not Match</Text> : null}
+                                {!validation.isValidConfirmPassword ? <Text style={styles.errorText}>Passwords do not Match</Text> : null} */}
 
                        
 
                                 <PhoneInput
-                                  placeholder={user.map((item)=>{return item.PhoneNumber}).toString()}
+                                  
+                                 
                                     ref={ref5}
                                     onChangeText={(val)=> {setData({ ...data, phone: val }),
                                     setValidation({ ...validation, isValidPhone: true })}}
                                     onChangeCountry={(obj) => setCode(obj.callingCode[0])}
+                                    
+                                    placeholder={data.phone}
                                     textContainerStyle={{
                                   
                                     backgroundColor: '#fff',
@@ -281,6 +271,7 @@ const EditProfileScreen = ({navigation}) => {
                                     fontSize:16,
                                     borderBottomWidth:1,
                                         borderBottomColor:'#9D9D9D',
+                                       
                                     
                                     
                                     
@@ -296,7 +287,7 @@ const EditProfileScreen = ({navigation}) => {
                                   
                                    />
                                     {!validation.isValidPhone ? <Text style={styles.errorText}>Enter contact number</Text> : null}
-                                    <View style={[styles.uploadView,{marginBottom:20}]}>
+                                    {/* <View style={[styles.uploadView,{marginBottom:20}]}>
                                     {
                                 !isProductImageSelected ?
                                     <TouchableOpacity onPress={() => openImagePicker()}  style={[styles.imageView, { alignSelf: 'center', marginBottom: 10, marginTop: 10 }]} >
@@ -318,7 +309,7 @@ const EditProfileScreen = ({navigation}) => {
                                         />
                                     </TouchableOpacity>
                             }
-                            </View>
+                            </View> */}
                   
 
                 

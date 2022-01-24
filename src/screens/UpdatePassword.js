@@ -7,7 +7,8 @@ import { styles } from './styles';
 import svg from './svg';
 import APIManager from '../../managers/APIManger';
 import Async from '@react-native-async-storage/async-storage'
-const ForgotPasswordScreen = ({ navigation }) => {
+const ForgotPasswordScreen = ({ navigation,route }) => {
+    const{email}=route.params
     const[code,setcode]=React.useState(null)
       React.useEffect(()=>{
     async function func(){
@@ -58,18 +59,17 @@ const ForgotPasswordScreen = ({ navigation }) => {
        onSubmit()
         }
       }
-      const[route,setroute]=React.useState({code:'',Email:""})
+      
       const[loader,setloader]=React.useState(false)
       const onSubmit=async()=>{
            setloader(true)
-         
-          const formdata=new FormData()
-          formdata.append('Password',data.password)
-          formdata.append('Email',code)
+        
            
-          const res=await new APIManager().updateuser(formdata)
+          const res=await new APIManager().password(JSON.stringify({
+              password:data.password
+          }),email)
 
-          if(res.success===true)
+          if(res.message==="*** Customer Updated SuccessFully ***")
           {
              
               navigation.navigate('LoginScreen')
@@ -106,7 +106,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
                          
                         />
                          {secureTextEntry.pwd ?
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 130 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 100 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             pwd: false
@@ -115,7 +115,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
                                         <Image source={require('../../assets/images/eye.png')} />
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 130 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 100 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             pwd: true
@@ -140,7 +140,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
                            
                         />
                          {secureTextEntry.confrm_pwd ?
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 205 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 160 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             confrm_pwd: false
@@ -149,7 +149,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
                                         <Image source={require('../../assets/images/eye.png')} />
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 205 }} onPress={() => {
+                                    <TouchableOpacity style={{ position: 'absolute', right: 10, top: 160 }} onPress={() => {
                                         setSecureTextEntry({
                                             ...secureTextEntry,
                                             confrm_pwd: true
